@@ -8,6 +8,7 @@
 Ubuntu    20.04
 Apache2   8.0.20
 MySQL     2.2.41
+Python3   3.8.2
 
 
 CGIを有効化する
