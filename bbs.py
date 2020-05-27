@@ -22,7 +22,7 @@ bbs_message = form.getvalue('bbs_message', '')
 adminname = form.getvalue('adminname')
 password = form.getvalue('password')
 loginFlg = form.getvalue('loginFlg')
-#--------------------------掲示板本体---------------------------------
+#--------------------------メッセージ表示機能---------------------------------
 def posts():
         cur= con.cursor()
         sql = "select * from bbs_info order by date desc"
@@ -197,10 +197,10 @@ def main():
         global con, cur, loginFlg
         loginFlg = 0
         con = MySQLdb.connect(
-            user='test',
-            passwd='test',
-            host='127.0.0.1',
-            db='bbs_db',
+            user='bbs_db_user',
+            passwd='bbs_db_passwd',
+            host='bbs_db_host',
+            db='bbs_db_name',
             charset="utf8")
         cur = con.cursor(MySQLdb.cursors.DictCursor)
         db_conection()
