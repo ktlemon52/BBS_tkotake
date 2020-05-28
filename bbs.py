@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+#コメントアウトしているコードは、管理者ログイン機能を実装しようとして
+#、実装しきれなかったものです。
+
 import io
 import sys
 
@@ -13,7 +16,7 @@ import textwrap
 
 
 global method, view_name, bbs_message, id
-# フォームの処理
+# フォームの値の受け取り
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 form  = cgi.FieldStorage(keep_blank_values = True)
 method = form.getvalue('method', '')
@@ -22,7 +25,8 @@ bbs_message = form.getvalue('bbs_message', '')
 adminname = form.getvalue('adminname')
 password = form.getvalue('password')
 loginFlg = form.getvalue('loginFlg')
-#--------------------------メッセージ表示機能---------------------------------
+
+#メッセージ表示機能(メッセージボード）
 def posts():
         cur= con.cursor()
         sql = "select * from bbs_info order by date desc"
@@ -51,20 +55,20 @@ def posts():
                     """).format(id = row[0])
             print(source)
             print("""</div>""")
-# -----------------削除機能-----------------------------------------------
+# 削除機能
 def delete():
             id = form['id'].value
             sql = 'delete from bbs_info where id = %s'
             cur.execute(sql, (id,))
             con.commit()
-# --------------------------------データベースに登録------------------------------------------
+# BDデータ登録機能
 def register():
             view_name = form['view_name'].value
             message = form['bbs_message'].value
             sql = "insert into bbs_info(message, name) values (%s, %s)"
             cur.execute(sql, (message, view_name))
             con.commit()
-#----------------ログイン機能------------------------------------
+#ログイン機能
 #def login():
 #        adminname = form['adminname'].value
 #        password = form['password'].value
@@ -83,13 +87,13 @@ def register():
 #                con.commit();
 #                global loginFlg
 #                loginFlg = row['loginFlg']
-#-----------------ログアウト------------------------------
+#ログアウト機能
 #def logout():
 #                sql = "update admin set loginFlg = 0 where loginFlg=1"
 #                cur.execute(sql)
 #                con.commit();
 
-#------------------------------メインHTML-----------------
+#メインHTML表示
 def header():
         print("Content-Type: text/html; charset=utf-8\n")
 
@@ -130,6 +134,7 @@ def main_html():
             """)
             print(source)
 
+#ログインフォーム表示機能
 #def login_form():
 #                source = textwrap.dedent("""
 #                <form method="post" action="">
@@ -155,8 +160,9 @@ def main_html():
 #                </form>
 #                """)
 #                print(source)
-#---------------------DBまとめた処理------------------------------------
 
+
+#DB接続の分岐機能
 def db_conection():
             method = form.getvalue('method')
             if(method == 'post' and not view_name == "" and not bbs_message == ""):
@@ -174,9 +180,8 @@ def db_conection():
  #               redirect()
  #           elif(method == 'logout'):
  #               logout()
-            method = ""
 
-#----------------リダイレクト機能---------------------------------------
+#投稿後のページリフレッシュ機能
 def redirect():
             source = textwrap.dedent( '''
             <html>
@@ -190,17 +195,16 @@ def redirect():
             ''' )
             print(source)
 
-#--------------------メイン処理-----------------------------------------
-
+#メイン
 def main():
         header()
         global con, cur, loginFlg
         loginFlg = 0
         con = MySQLdb.connect(
-            user='bbs_db_user',
-            passwd='bbs_db_passwd',
-            host='bbs_db_host',
-            db='bbs_db_name',
+            user='test',
+            passwd='test',
+            host='127.0.0.1',
+            db='bbs_db',
             charset="utf8")
         cur = con.cursor(MySQLdb.cursors.DictCursor)
         db_conection()
